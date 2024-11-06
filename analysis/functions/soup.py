@@ -122,9 +122,9 @@ class SoupAnalyze(Analyze):
     IDENT = ["@", "soup:"]
 
     def __init__(self, html: str):
-        super(SoupAnalyze, self).__init__(BeautifulSoup(html, "lxml"))
+        super(SoupAnalyze, self).__init__(BeautifulSoup(str(html), "lxml"))
 
-
-s = SoupAnalyze("<a href='http://123.com'>L1</a><a>L2</a><a>L3</a><a>L4</a><a>L5</a>")
-v = s.select("@tag[a] @md @replace[L,]")
-print(v)
+#
+# s = SoupAnalyze("<a href='http://123.com'>L1</a><a>L2</a><a>L3</a><a>L4</a><a>L5</a>")
+# v = s.select("@tag[a] @md @replace[L,]")
+# print(v)

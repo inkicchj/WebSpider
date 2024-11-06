@@ -15,6 +15,7 @@ dependencies = [
     "jsonpath>=0.82.2",
     "fake-useragent>=1.5.1",
     "pydantic>=2.9.2",
+    "lxml>=5.3.0",
 ]
 requires-python = "==3.10.*"
 readme = "README.md"

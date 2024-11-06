@@ -1,3 +1,4 @@
+import urllib.parse
 from typing import Mapping, Any
 from typing import Optional
 
@@ -40,4 +41,9 @@ class JsExtend:
     def read_file(cls, path):
         with open(path, "r", encoding="utf-8") as f:
             return f.read()
+
+
+    @classmethod
+    def urlencode(cls, s):
+        return urllib.parse.quote(s)
 

@@ -47,15 +47,17 @@ class Request:
             self.retry_count = 0
         else:
             self.retry_count = min(self.retry_count, 10)
-
-        self.request_option = self.client.build_request(
-            method=self.method,
-            url=self.url,
-            data=self.data,
-            headers=self.headers,
-            cookies=self.cookies,
-            timeout=2
-        )
+        try:
+            self.request_option = self.client.build_request(
+                method=self.method,
+                url=self.url,
+                data=self.data,
+                headers=self.headers,
+                cookies=self.cookies,
+                timeout=2
+            )
+        except Exception as e:
+            print(e)
 
     def change_url(self, url):
         self.url = url
@@ -66,6 +68,7 @@ class Request:
             time.sleep(self.step_time)
         if not self.request_option:
             self._build_request()
+
         try:
             rep: Response = self.client.send(self.request_option)
             if rep.is_error:
@@ -76,6 +79,7 @@ class Request:
             return rep
         finally:
             self._close()
+
 
     def _retry(self, func):
         if self.retry_count > 0:
@@ -102,6 +106,8 @@ class FetchManager:
         self.all_task_done = False
 
     def put_task(self, reqeust_list: List[Request]):
+        if self.max_size > len(reqeust_list):
+            self.max_size = len(reqeust_list)
         for reqeust in reqeust_list:
             self.queue.put(reqeust)
 
@@ -125,7 +131,6 @@ class FetchManager:
         task: Request = self.get_task()
 
         if task:
-
             result = task.get_response()
             func(task, result)
             self.task_done()
