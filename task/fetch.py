@@ -6,15 +6,7 @@ from queue import Queue, Empty
 from typing import Union, List
 
 from fake_useragent import UserAgent
-from httpx import AsyncClient, Client as HttpxClient, Response
-from motor.motor_asyncio import AsyncIOMotorClient
-from tqdm import tqdm
-
-from analysis.AnalyzeRule import AnalyzeRule
-from analysis.AnalyzeUrl import AnalyzeUrl, Option
-from task.rules import RULES
-import dill
-import pymongo
+from httpx import Client as HttpxClient, Response
 
 
 class Request:
@@ -148,96 +140,3 @@ class FetchManager:
     def start(self, func):
         for i in range(self.max_size):
             self.pool.submit(self.run_task, func=func)
-
-
-async def send_url(client: AsyncClient, url: str, option: Option):
-    request = client.build_request(**{
-        "url": url,
-        "method": option.method,
-        "headers": option.headers,
-        "cookies": option.cookies
-    })
-    resp = await client.send(request)
-    return resp
-
-
-def failed(cat, url):
-    with open("./failed.txt", "a") as f:
-        f.write(f"{cat}: {url}\n")
-
-def main(key):
-    rule = RULES[0]
-
-    u = AnalyzeUrl(
-        rule.base_url + rule.search.url,
-        rule.base_url,
-        key=key
-    )
-
-    urls = u.get_url()
-
-    requests_ = []
-    for u_ in urls:
-        requests_.append(
-            Request(u_, **u.get_option().model_dump())
-        )
-    fm = FetchManager(3)
-    fm.put_task(requests_)
-    t = tqdm(total=fm.task_count())
-
-    mongo = pymongo.MongoClient('localhost', 27017)
-    db = mongo['policy']
-    coll = db['yan_an_policy']
-
-    def record(task: Request, resp: Union[Response, None]):
-
-        if resp and resp.status_code:
-
-            items = AnalyzeRule.get_elements(resp.text, rule.search.items)
-
-            if not items:
-                failed("搜索页面没有列表", task.url)
-            for item in items:
-                title = AnalyzeRule.get_string(item, rule.search.title)
-                if not title:
-                    failed("列表项没有标题", task.url)
-                cat_name = AnalyzeRule.get_string(item, rule.search.cat_name)
-                site_name = AnalyzeRule.get_string(item, rule.search.site_name)
-                source_name = AnalyzeRule.get_string(item, rule.search.source_name)
-                push_time = AnalyzeRule.get_string(item, rule.search.push_time)
-                content_url = AnalyzeRule.get_string(item, rule.search.content_url)
-
-                if content_url:
-                    task.change_url(content_url)
-                    resp_ = task.get_response()
-                    if resp_ and resp_.status_code == 200:
-                        content = AnalyzeRule.get_string(resp_.text, rule.content.text)
-                    else:
-                        content = ""
-                else:
-                    content = ""
-
-                # entry = coll.find_one({"title": title})
-                # if not entry:
-                #     coll.insert_one({
-                #         "title": title,
-                #         "cat_name": cat_name,
-                #         "site_name": site_name,
-                #         "source_name": source_name,
-                #         "push_time": push_time,
-                #         "content_url": content_url,
-                #         "content": content
-                #     })
-                print(title)
-        else:
-            failed("搜索页面获取失败", task.url)
-
-        t.update(1)
-
-    fm.start(record)
-
-
-if __name__ == "__main__":
-    # asyncio.run(start("灾害", 1))
-
-    main(key="灾害")
