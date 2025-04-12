@@ -7,7 +7,7 @@
 
 ```python
 from analysis.analyze_rule import AnalyzeRule
-result = AnalyzeRule.get_elements("<div><a>Lab 1</a><a style='dis'>Lab 2</a></div>", "[ {{ @tag[a] @replace[L,0] }} ]")
+result = AnalyzeRule.get_elements("<div><a>Lab 1</a><a style='dis'>Lab 2</a></div>", "[ {{ @tag[a] @text @replace[L,0] }} ]")
 >>> ['[ 0ab 1 ]', '[ 0ab 2 ]']
 ```
 
