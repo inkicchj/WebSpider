@@ -1,10 +1,6 @@
 # WebSpider
 项目灵感来源于 [阅读APP](https://github.com/gedoor/legado/tree/3.25)，通读了核心源码后，使用Python实现了类似的基于BeautifulSoup的网页解析器和URL解析器。
 
-# URL解析器
-
-
-
 # 网页解析器
 
 ## 用法
@@ -21,135 +17,93 @@ result = AnalyzeRule.get_elements("<div><a>Lab 1</a><a style='dis'>Lab 2</a></di
 
 - 文本格式化指令
     
-    - **replace** [old_val, new_val]
+    - `@replace[L,l]`
         
-        替换字符串
+        替换字符串  
 
-        `@replace[L,l]`
-
-    - **rinsert** [val]
+    - `@rinsert[end]`
 
         在右边插入文本
 
-        `@rinsert[end]`
-
-    - **linsert** [val]
+    - `@linsert[start]`
 
         在左边插入文本
-
-        `@linsert[start]`
     
-    - **insert** [val, pos]
+    - `@insert[middle, 3]`
 
         在特定位置插入文本
 
-        `@insert[middle, 3]`
-
-    - **regex** [val, group]
+    - `@regex[start(.*)end, 0]`
 
         获取正则指定的匹配组
 
-        `@regex[start(.*)end, 1]`
-
-    - **upper**
+    - `@upper`
 
         文本转大写
 
-        `@upper`
-
-    - **lower**
+    - `@lower`
 
         文本转小写
 
-        `@lower`
-
-    - **trim**
+    - `@trim`
 
         清除前后空白符
 
-        `@trim`
-
-    - **str**
+    - `@str`
 
         强制转为 str 类型
 
-        `@str`
-
-    - **md**
+    - `@md`
 
         将 html 转换为 markdown 格式
 
-        `@md`
-
 - 逻辑操作指令
 
-    - **and**
+    - `@and`
 
         合并两个解析成功的结果
 
-        `@and`
-
-    - **or**
+    - `@or`
 
         选择一个解析成功的结果
-
-        `@or`
-
-    - **not**
+        
+    - `@not`
 
         排除解析成功的结果
 
-        `@not`
-
-    - **union**
+    - `@union`
 
         连接两个解析成功的结果
 
-        `@union`
-
-    - **conti**
+    - `@conti`
 
         继续完成后续指令
 
-        `@conti`
-
 - 列表操作指令
 
-    - **first**
+    - `@first`
 
         获取第一个结果
 
-        `@first`
-
-    - **last**
+    - `@last`
 
         获取最后一个结果
 
-        `@last`
-
-    - **one** [st]
+    - `@one[1]`
 
         获取 *st* 指定索引的一个结果
 
-        `@one[1]`
-
-    - **slice** [st, ed, step]
+    - `@slice[1,5,1]`
 
         获取 [*st*, *ed*) 范围内的结果，可设置步长
-
-        `@slice[1,5,1]`
-
-    - **series** [pos]
+      
+    - `@series[1,3,4,6]`
 
         获取一系列指定索引的结果
 
-        `@series[1,3,4,6]`
-
-    - **reverse**
+    - `@reverse`
 
         结果列表取反
-
-        `@reverse`
 
 - 数据存取指令
 
@@ -163,77 +117,38 @@ result = AnalyzeRule.get_elements("<div><a>Lab 1</a><a style='dis'>Lab 2</a></di
 
     > 参数之前加上 *~* 可启用正则匹配
 
-    - **class** [val]
+    - `@class[main]` `@class[~ma*]`
 
-        `@class[main]` `@class[~ma*]`
+    - `@id[main]` `@id[~ma*]`
 
-    - **id** [val]
+    - `@tag[a]` `tag[div]`
 
-        `@id[main]` `@id[~ma*]`
+    - `@data[name, test]`       
 
-    - **tag** [val]
+    - `@href[https://123.com]`
 
-        `@tag[a]` `tag[div]`
+    - `@src[https://123.com/1.png]`
 
-    - **data** [name, val]
+    - `@value[test]`  
 
-        ```html
-        <div data-name="test"></div>
-        ```
+    - `@prop[href]`
 
-        `@data[name, test]`
+    - `@text`
 
-    - **href** [val]
+    - `@eq[.main]`
 
-        `@href[https://123.com]`
+    - `@ne[.main]`
 
-    - **src** [val]
+    - `@self` 
 
-        `@src[https://123.com/1.png]`
+    - `@css[.main]`
 
-    - **value** [val]
-
-        `@value[test]`
-
-    - **prop** [val]
-
-        `@prop[href]`
-
-    - **text**
-
-        `@text`
-
-    - **eq** [css]
-
-        `@eq[.main]`
-
-    - **ne** [css]
-
-        `@ne[.main]`
-
-    - **self**
-
-        `@self`
-
-    - **css** [val]
-
-        `@css[.main]`
-
-    - **children**
-
-        `@children`
+    - `@children`
 
 
-### Jsonp 指令
+# URL解析器
 
-- 元素获取指令
-
-    - **json** [data, j]
-
-
-## URL解析器
-
-### option
+## option
     
 ```python
 
@@ -249,8 +164,7 @@ class Option(BaseModel):
 
 ```
 
-
-### <js>javascript脚本的代码</js>
+## <js>javascript脚本的代码</js>
 
 在URL中可通过 *#result\d+#* 来获取指定顺序js脚本的值
 
@@ -258,7 +172,7 @@ class Option(BaseModel):
 解析后:
 `https://1230.com`
 
-### py扩展工具函数
+## py扩展工具函数
 
 - py.soup
 
