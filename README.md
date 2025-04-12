@@ -107,9 +107,9 @@ result = AnalyzeRule.get_elements("<div><a>Lab 1</a><a style='dis'>Lab 2</a></di
 
 - 数据存取指令
 
-    - **put** [data, key]
+    - `@put[key]`
 
-    - **get** [_data, key]
+    - `@get[key]`
 
 ### Soup 指令
 
