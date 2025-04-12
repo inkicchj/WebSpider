@@ -4,7 +4,7 @@ import re
 from typing import List, Any
 from cache3 import Cache
 
-from analysis.RuleAnalyzer import RuleAnalyzer
+from analysis.rule_analyzer import RuleAnalyzer
 from markdownify import markdownify
 
 
@@ -148,13 +148,13 @@ class Analyze:
         self._custom_func_bool = False
 
     def select(self, rule: str):
-
         for ident in self.IDENT:
             if rule.startswith(ident):
                 self.rule = rule[len(ident):].strip()
                 break
             else:
-                continue
+                return [rule]
+
         if self.rule:
             rule_list = [str(r).strip() for r in RuleAnalyzer(self.rule).split_rule("@") if r]
             self._generate_func(rule_list)
@@ -176,7 +176,6 @@ class Analyze:
                 if func[1].__name__ == "conti":
                     self.data[:] = left_vals
                 else:
-
                     right_vals = []
                     for i in range(pos, len(self.functions)):
                         r_func = self.functions[i]

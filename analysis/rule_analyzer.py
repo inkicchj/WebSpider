@@ -1,6 +1,6 @@
 # 通用规则解析
 from typing import Callable, Optional
-from analysis.Syntax import Syntax
+from analysis.syntax import Syntax
 
 
 class RuleAnalyzer:
@@ -255,29 +255,33 @@ class RuleAnalyzer:
             pos_st = self.pos
 
             if self.consume_to(ed):
-                result.append(self.queue[self.startX: pos_st - len(st)])
+                result.append(f"normal:{self.queue[self.startX: pos_st - len(st)]}")
 
                 rule = self.queue[pos_st: self.pos]
+
                 if rule:
-                    analyzer = Syntax(RuleAnalyzer(rule.strip()).split_rule("@"))
-                    if analyzer.exist():
-                        result.append(analyzer)
-                    else:
-                        result.append(rule)
+                    # analyzer = Syntax(RuleAnalyzer(rule.strip()).split_rule("@"))
+                    # if analyzer.exist():
+                    #     result.append(analyzer)
+                    # else:
+                    #     result.append(rule)
+                    result.append(f"rule:{rule.strip()}")
 
                 self.pos += len(ed)
                 self.startX = self.pos
 
         if self.startX == 0:
 
-            analyzer = Syntax(RuleAnalyzer(self.queue.strip()).split_rule("@"))
-            if analyzer.exist():
-                return [analyzer]
-            else:
-                return [self.queue]
+            # analyzer = Syntax(RuleAnalyzer(self.queue.strip()).split_rule("@"))
+            # if analyzer.exist():
+            #     return [analyzer]
+            # else:
+            #     return [self.queue]
+
+            return [f"rule:{self.queue.strip()}"]
 
         else:
-            result.append(self.queue[self.startX:])
+            result.append(f"normal:{self.queue[self.startX:]}")
             return result
 
 # html = """

@@ -4,7 +4,7 @@ from typing import Optional
 
 from fake_useragent import UserAgent
 from httpx import Client
-from analysis.AnalyzeRule import AnalyzeRule
+from analysis.analyze_rule import AnalyzeRule
 
 
 class JsExtend:

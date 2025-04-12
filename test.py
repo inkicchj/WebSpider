@@ -1,5 +1,5 @@
 from analysis.functions.soup import SoupAnalyze
-from analysis.AnalyzeUrl import AnalyzeUrl
+from analysis.analyze_url import AnalyzeUrl
 from task.fetch import FetchManager, Request
 from httpx import Response
 
@@ -14,7 +14,7 @@ def record(req, res: Response):
             print(nickname, push_time, content)
 
 def start(key: str, st_time: str, ed_time: str):
-    URL = (r"https://s.weibo.com/weibo?q={{key}}&typeall=1&suball=1&timescope=custom:{st_time}:{ed_time}&Refer=g&page=<,50>"
+    URL = (r"https://s.weibo.com/weibo?q={{key}}&typeall=1&suball=1&timescope=custom:" + f"{st_time}:{ed_time}" + r"&Refer=g&page=<,50>"
            r"@option:{'headers':{'Referer': 'https://s.weibo.com/weibo?q={{py.urlencode(key)}}', 'Cookie': '{{py.read_file('./cookies.txt')}}'}, 'step_time': 3}")
     result = AnalyzeUrl(URL, "", key)
     urls = result.get_url()

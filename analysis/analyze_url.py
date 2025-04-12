@@ -7,7 +7,7 @@ from typing import Union
 import js2py
 from pydantic import BaseModel
 
-from analysis.RuleAnalyzer import RuleAnalyzer
+from analysis.rule_analyzer import RuleAnalyzer
 from analysis.functions.js_extend import JsExtend
 
 

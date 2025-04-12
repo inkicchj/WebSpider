@@ -1,5 +1,3 @@
-import asyncio
-import random
 import time
 from concurrent.futures import ThreadPoolExecutor
 from queue import Queue, Empty
@@ -84,6 +82,7 @@ class Request:
     def _retry(self, func):
         if self.retry_count > 0:
             self.retry_count -= 1
+            print(f"》{self.url} 重试中 {self.retry_count}")
             return func()
         else:
             return None
@@ -131,9 +130,10 @@ class FetchManager:
         task: Request = self.get_task()
 
         if task:
-            result = task.get_response()
+            result: Response = task.get_response()
             func(task, result)
             self.task_done()
+            print(f"[{task.url}] 状态: {result.is_success}")
             if self.queue.qsize() > 0:
                 self.run_task(func)
             else:
@@ -145,3 +145,4 @@ class FetchManager:
     def start(self, func):
         for i in range(self.max_size):
             self.pool.submit(self.run_task, func=func)
+        print(f"{self.max_size} 并行任务已开始")
